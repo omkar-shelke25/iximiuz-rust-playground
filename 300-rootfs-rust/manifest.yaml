@@ -1,0 +1,49 @@
+kind: playground
+title: Rust Programming
+description: A disposable Rust development environment powered by Rust and Cargo.
+categories:
+  - programming
+
+playground:
+  networks:
+    - name: local
+      subnet: 172.16.0.0/24
+
+  machines:
+    - name: rust-01
+      users:
+        - name: root
+        - name: laborant
+          default: true
+
+      drives:
+        - source: oci://ghcr.io/omkar-shelke25/rust-playground:0.0.5
+          mount: /
+          size: 30GiB
+
+      network:
+        interfaces:
+          - network: local
+
+      resources:
+        cpuCount: 4
+        ramSize: 10GiB
+  
+  tabs:
+    - id: ide-rust-01
+      kind: ide
+      name: IDE
+      machine: rust-01
+    - id: terminal-rust-01
+      kind: terminal
+      name: Term
+      machine: rust-01
+    - id: rust-docs
+      kind: web-page       # embed an external web page as an iframe tab
+      name: doc.rust   # user-defined name of the tab
+      url: https://doc.rust-lang.org/book/
+    
+  accessControl:
+    canList: [owner]
+    canRead: [owner]
+    canStart: [owner]
