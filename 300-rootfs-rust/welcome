@@ -1,0 +1,24 @@
+   ██████╗ ██╗   ██╗███████╗████████╗
+   ██╔══██╗██║   ██║██╔════╝╚══██╔══╝
+   ██████╔╝██║   ██║███████╗   ██║
+   ██╔══██╗██║   ██║╚════██║   ██║
+   ██║  ██║╚██████╔╝███████║   ██║   🦀
+   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
+
+   Welcome to the Rust Playground! 🚀
+   ───────────────────────────────────────────
+
+   cargo new <name>   →  Create a new project
+   cargo run          →  Compile and run
+   cargo build        →  Build without running
+   cargo check        →  Fast type check
+   cargo fmt          →  Auto-format code
+   cargo clippy       →  Lint and catch mistakes
+   cargo test         →  Run your test suite
+   cargo add <crate>  →  Add a dependency
+   cargo update       →  Update dependencies
+   cargo doc --open   →  Open docs in browser
+   cargo clean        →  Remove build artifacts
+
+   ───────────────────────────────────────────
+   Have fun building with Rust! 🦀
