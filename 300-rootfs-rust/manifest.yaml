@@ -1,49 +1,133 @@
 kind: playground
+name: rust-playground-303b96c8
+base: flexbox
 title: Rust Programming
-description: A disposable Rust development environment powered by Rust and Cargo.
+description: A disposable Rust development environment with stable, beta, and nightly toolchains, cargo-watch, rustfmt, and clippy pre-installed.
+cover: /content/files/playgrounds/rust-playground-303b96c8/__static__/logo120.svg
 categories:
-  - programming
+    - programming
+markdown: |-
+    A disposable Rust development environment with stable, beta, and nightly toolchains, cargo-watch, rustfmt, clippy, rust-analyzer, codelldb, and musl cross-compilation target pre-installed. Full IDE support via VS Code with debugger. Runs on 4 vCPU / 10 GiB RAM / 100 GiB disk.
 
+    ## What's included
+
+    - `rustc` / `cargo` — stable, beta, nightly
+    - `rustfmt` — code formatter — stable, beta, nightly
+    - `clippy` — linter — stable, beta, nightly
+    - `cargo-watch` — recompile on file change
+    - `rust-analyzer` — IDE intelligence (VS Code)
+    - `codelldb` — native debugger (VS Code)
+    - musl target — `x86_64-unknown-linux-musl` for static binaries
+
+    ## Key commands
+
+    ### New project
+    ```bash
+    cargo new hello && cd hello
+    cargo run
+    ```
+
+    ### Switch toolchain
+    ```bash
+    cargo +nightly run          # run with nightly
+    cargo +beta build           # build with beta
+    rustup show                 # list installed toolchains
+    ```
+
+    ### Watch mode
+    ```bash
+    cargo watch -x run          # rerun on save
+    cargo watch -x test         # retest on save
+    cargo watch -x "run -- --flag"
+    ```
+
+    ### Format and lint
+    ```bash
+    cargo fmt                   # format all files
+    cargo fmt -- --check        # check without modifying
+    cargo clippy                # lint with suggestions
+    cargo clippy -- -D warnings # treat warnings as errors
+    ```
+
+    ### Build
+    ```bash
+    cargo build                 # debug build
+    cargo build --release       # optimized build
+
+    # Static binary (musl)
+    cargo build --release --target x86_64-unknown-linux-musl
+    ```
+
+    ### Test
+    ```bash
+    cargo test                  # run all tests
+    cargo test test_name        # run specific test
+    cargo test -- --nocapture   # show println! output
+    ```
+
+    ### Toolchain management
+    ```bash
+    rustup show                 # installed toolchains
+    rustup toolchain list       # all toolchains
+    rustc --version             # active rustc version
+    cargo --version             # active cargo version
+    rustup update               # update all toolchains
+    ```
 playground:
-  networks:
-    - name: local
-      subnet: 172.16.0.0/24
-
-  machines:
-    - name: rust-01
-      users:
-        - name: root
-        - name: laborant
-          default: true
-
-      drives:
-        - source: oci://ghcr.io/omkar-shelke25/rust-playground:0.0.5
-          mount: /
-          size: 30GiB
-
-      network:
-        interfaces:
-          - network: local
-
-      resources:
-        cpuCount: 4
-        ramSize: 10GiB
-  
-  tabs:
-    - id: ide-rust-01
-      kind: ide
-      name: IDE
-      machine: rust-01
-    - id: terminal-rust-01
-      kind: terminal
-      name: Term
-      machine: rust-01
-    - id: rust-docs
-      kind: web-page       # embed an external web page as an iframe tab
-      name: doc.rust   # user-defined name of the tab
-      url: https://doc.rust-lang.org/book/
-    
-  accessControl:
-    canList: [owner]
-    canRead: [owner]
-    canStart: [owner]
+    networks:
+        - name: local
+          subnet: 172.16.0.0/24
+    machines:
+        - name: rust-01
+          users:
+            - name: root
+            - name: laborant
+              default: true
+          drives:
+            - source: oci://ghcr.io/omkar-shelke25/rust-playground:0.0.17
+              mount: /
+              size: 100GiB
+          network:
+            interfaces:
+                - network: local
+          resources:
+            cpuCount: 4
+            ramSize: 10GiB
+    tabs:
+        - id: ide-rust-01
+          kind: ide
+          name: IDE
+          machine: rust-01
+        - id: terminal-rust-01
+          kind: terminal
+          name: Term
+          machine: rust-01
+        - id: rust-docs
+          kind: web-page
+          name: doc.rust
+          machine: rust-01
+          url: https://doc.rust-lang.org/book/
+    initTasks:
+        init_rust_01_1:
+            name: init_rust_01_1
+            machine: rust-01
+            init: true
+            user: laborant
+            timeout_seconds: 300
+            run: rustup self update 2>/dev/null
+        init_rust_01_2:
+            name: init_rust_01_2
+            machine: rust-01
+            init: true
+            user: laborant
+            timeout_seconds: 300
+            needs:
+                - init_rust_01_1
+            run: rustup update --no-self-update 2>/dev/null
+    accessControl:
+        canList:
+            - anyone
+        canRead:
+            - anyone
+        canStart:
+            - anyone
