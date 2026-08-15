@@ -5,87 +5,80 @@ FROM ghcr.io/iximiuz/labs/rootfs:ubuntu-docker
 ARG RUST_VERSION=stable
 ARG LAB_USER=laborant
 
+# ── Environment ───────────────────────────────────────────────────────────────
+ENV RUSTUP_HOME=/home/${LAB_USER}/.rustup \
+    CARGO_HOME=/home/${LAB_USER}/.cargo \
+    PATH=/home/${LAB_USER}/.cargo/bin:$PATH
+
+# ── System dependencies ───────────────────────────────────────────────────────
+USER root
+ENV HOME=/root
+
+RUN apt-get update && apt-get install -y \
+        build-essential \
+        ca-certificates \
+        clang \
+        curl \
+        gcc \
+        git \
+        libssl-dev \
+        lld \
+        musl-tools \
+        pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Rust toolchain (installed as lab user — correct ownership from the start) ─
+USER $LAB_USER
+ENV HOME=/home/$LAB_USER
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y \
+        --default-toolchain "${RUST_VERSION}" \
+        --profile default \
+        --no-modify-path
+
+RUN rustup toolchain install beta nightly \
+    && rustup target add x86_64-unknown-linux-musl \
+    && for tc in stable beta nightly; do \
+           rustup component add rustfmt clippy --toolchain "$tc"; \
+       done
+
+# ── Cargo tools ───────────────────────────────────────────────────────────────
+RUN cargo install cargo-watch --locked
+
+# ── System-wide symlinks (needs root) ────────────────────────────────────────
 USER root
 
-ENV HOME=/root
-ENV RUSTUP_HOME=/usr/local/rustup
-ENV CARGO_HOME=/usr/local/cargo
-ENV PATH=/usr/local/cargo/bin:$PATH
+RUN ln -sf /home/${LAB_USER}/.cargo/bin/rustup          /usr/local/bin/rustup  \
+    && ln -sf /home/${LAB_USER}/.cargo/bin/cargo         /usr/local/bin/cargo   \
+    && ln -sf /home/${LAB_USER}/.cargo/bin/rustc         /usr/local/bin/rustc   \
+    && ln -sf /home/${LAB_USER}/.cargo/bin/rustfmt       /usr/local/bin/rustfmt \
+    && ln -sf /home/${LAB_USER}/.cargo/bin/cargo-fmt     /usr/local/bin/cargo-fmt \
+    && ln -sf /home/${LAB_USER}/.cargo/bin/clippy-driver /usr/local/bin/clippy-driver \
+    && ln -sf /home/${LAB_USER}/.cargo/bin/cargo-clippy  /usr/local/bin/cargo-clippy
 
-RUN <<EOF
-set -eu
+# ── Login shell env ───────────────────────────────────────────────────────────
+RUN printf 'export RUSTUP_HOME=/home/laborant/.rustup\n'      >  /etc/profile.d/rust.sh \
+    && printf 'export CARGO_HOME=/home/laborant/.cargo\n'     >> /etc/profile.d/rust.sh \
+    && printf 'export PATH=$PATH:/home/laborant/.cargo/bin\n' >> /etc/profile.d/rust.sh \
+    && chmod +x /etc/profile.d/rust.sh
 
-apt-get update
+# ── Root shell env ────────────────────────────────────────────────────────────
+RUN printf '\nsource /etc/profile.d/rust.sh\n' >> /root/.bashrc
 
-apt-get install -y \
-  build-essential \
-  gcc \
-  curl \
-  git \
-  pkg-config \
-  libssl-dev \
-  ca-certificates \
-  clang \
-  lld
-
-# Install Rust
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | \
-  sh -s -- -y \
-  --default-toolchain ${RUST_VERSION} \
-  --profile default \
-  --no-modify-path
-
-# Rust tooling
-rustup component add rustfmt
-rustup component add clippy
-
-# Make Rust available system-wide
-ln -sf /usr/local/cargo/bin/rustup /usr/local/bin/rustup
-ln -sf /usr/local/cargo/bin/cargo /usr/local/bin/cargo
-ln -sf /usr/local/cargo/bin/rustc /usr/local/bin/rustc
-ln -sf /usr/local/cargo/bin/rustfmt /usr/local/bin/rustfmt
-ln -sf /usr/local/cargo/bin/cargo-fmt /usr/local/bin/cargo-fmt
-ln -sf /usr/local/cargo/bin/clippy-driver /usr/local/bin/clippy-driver
-ln -sf /usr/local/cargo/bin/cargo-clippy /usr/local/bin/cargo-clippy
-
-printf "\nexport RUSTUP_HOME=/usr/local/rustup\n" >> $HOME/.bashrc
-printf "export CARGO_HOME=/usr/local/cargo\n" >> $HOME/.bashrc
-printf "export PATH=\$PATH:/usr/local/cargo/bin\n" >> $HOME/.bashrc
-
-rustc --version
-cargo --version
-rustfmt --version
-cargo clippy --version
-
-rm -rf /var/lib/apt/lists/*
-EOF
-
+# ── Smoke test ────────────────────────────────────────────────────────────────
 USER $LAB_USER
+RUN rustc --version \
+    && cargo --version \
+    && rustfmt --version \
+    && cargo clippy --version
 
-ENV HOME=/home/$LAB_USER
-ENV RUSTUP_HOME=/usr/local/rustup
-ENV CARGO_HOME=/usr/local/cargo
-ENV PATH=/usr/local/cargo/bin:$PATH
+# ── Lab user shell env ────────────────────────────────────────────────────────
+RUN printf '\nsource /etc/profile.d/rust.sh\n' >> "$HOME/.bashrc"
 
-RUN <<EOF
-set -eu
+# ── VS Code extensions ────────────────────────────────────────────────────────
+RUN code-server --install-extension rust-lang.rust-analyzer \
+    && code-server --install-extension vadimcn.vscode-lldb
 
-printf "\nexport RUSTUP_HOME=/usr/local/rustup\n" >> $HOME/.bashrc
-printf "export CARGO_HOME=/usr/local/cargo\n" >> $HOME/.bashrc
-printf "export PATH=\$PATH:/usr/local/cargo/bin\n" >> $HOME/.bashrc
-
-rustc --version
-cargo --version
-rustfmt --version
-cargo clippy --version
-EOF
-
-# Rust support in VS Code
-RUN <<EOF
-set -eu
-
-code-server --install-extension rust-lang.rust-analyzer
-
-EOF
-
+# ── Welcome ───────────────────────────────────────────────────────────────────
 COPY welcome $HOME/.welcome
