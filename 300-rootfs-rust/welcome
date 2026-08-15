@@ -1,24 +1,38 @@
-   ██████╗ ██╗   ██╗███████╗████████╗
-   ██╔══██╗██║   ██║██╔════╝╚══██╔══╝
-   ██████╔╝██║   ██║███████╗   ██║
-   ██╔══██╗██║   ██║╚════██║   ██║
-   ██║  ██║╚██████╔╝███████║   ██║   🦀
-   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
+██████╗ ██╗   ██╗███████╗████████╗
+██╔══██╗██║   ██║██╔════╝╚══██╔══╝
+██████╔╝██║   ██║███████╗   ██║
+██╔══██╗██║   ██║╚════██║   ██║
+██║  ██║╚██████╔╝███████║   ██║   🦀
+╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
 
-   Welcome to the Rust Playground! 🚀
-   ───────────────────────────────────────────
+Welcome to the Rust Playground!
+───────────────────────────────────────────────────
+ Toolchains   stable · beta · nightly
+ Targets      x86_64-unknown-linux-gnu · musl
+───────────────────────────────────────────────────
+ PROJECT
+   cargo new <name>       Create a new project
+   cargo run              Compile and run
+   cargo build            Build without running
+   cargo check            Fast type check
+   cargo clean            Remove build artifacts
 
-   cargo new <name>   →  Create a new project
-   cargo run          →  Compile and run
-   cargo build        →  Build without running
-   cargo check        →  Fast type check
-   cargo fmt          →  Auto-format code
-   cargo clippy       →  Lint and catch mistakes
-   cargo test         →  Run your test suite
-   cargo add <crate>  →  Add a dependency
-   cargo update       →  Update dependencies
-   cargo doc --open   →  Open docs in browser
-   cargo clean        →  Remove build artifacts
+ CODE QUALITY
+   cargo fmt              Auto-format code
+   cargo clippy           Lint and catch mistakes
+   cargo test             Run your test suite
 
-   ───────────────────────────────────────────
-   Have fun building with Rust! 🦀
+ DEPENDENCIES
+   cargo add <crate>      Add a dependency
+   cargo update           Update dependencies
+   cargo doc --open       Open docs in browser
+
+ WATCH MODE
+   cargo watch -x run     Auto-recompile on save
+   cargo watch -x test    Auto-test on save
+
+ TOOLCHAIN SWITCHING
+   cargo +beta   <cmd>    Run with beta toolchain
+   cargo +nightly <cmd>   Run with nightly toolchain
+───────────────────────────────────────────────────
+ Have fun building with Rust! 🦀
