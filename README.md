@@ -1,4 +1,10 @@
 # 🦀 Rust Playground
+██████╗ ██╗   ██╗███████╗████████╗
+██╔══██╗██║   ██║██╔════╝╚══██╔══╝
+██████╔╝██║   ██║███████╗   ██║
+██╔══██╗██║   ██║╚════██║   ██║
+██║  ██║╚██████╔╝███████║   ██║   🦀
+╚═╝  ╚═╝ ╚═════╝ ╚══════╝   ╚═╝
 
 A disposable, ready-to-code Rust development environment powered by Cargo and Rust stable — no setup required.
 
