@@ -75,7 +75,7 @@ cargo clean        →  Remove build artifacts
 |---|---|
 | CPU | 4 cores |
 | RAM | 10 GiB |
-| Disk | 30 GiB |
+| Disk | 100 GiB |
 | OS | Ubuntu (Docker-enabled) |
 
 ---
@@ -83,7 +83,7 @@ cargo clean        →  Remove build artifacts
 ## Docker Image
 
 ```
-ghcr.io/omkar-shelke25/rust-playground:0.0.5
+ghcr.io/omkar-shelke25/rust-playground:0.0.17
 ```
 
 Build args:
