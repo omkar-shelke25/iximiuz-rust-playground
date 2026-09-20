@@ -9,9 +9,9 @@
    A disposable Rust environment. Nothing is saved when it stops.
 
  ──────────────────────────────────────────────────────────────
-   Toolchains   stable (default), beta, nightly
+   Toolchains   stable 1.98.1 (default), beta, nightly
    Targets      x86_64-unknown-linux-gnu, musl (static)
-   Editor       IDE tab, rust-analyzer and lldb ready
+   Editor       IDE tab, rust-analyzer, clippy on save, lldb
    Docs         doc.rust tab, or run cargo doc --open
  ──────────────────────────────────────────────────────────────
 
@@ -23,17 +23,24 @@
    TEST AND LINT
      cargo test                  Run the test suite
      cargo test -- --nocapture   Show println! output
+     cargo nextest run           Faster, cleaner test runner
      cargo clippy                Lint with suggestions
      cargo fmt                   Format every file
+
+   WATCH
+     bacon                       Live check on every save
+     bacon clippy                Live lint on every save
+     bacon test                  Live tests on every save
 
    DEPENDENCIES
      cargo add <crate>           Add a dependency
      cargo update                Update the lockfile
      cargo tree                  Show the dependency graph
+     cargo audit                 Scan for known vulnerabilities
+     cargo binstall <crate>      Install a tool, prebuilt
 
-   WATCH
-     cargo watch -x run          Rerun on save
-     cargo watch -x test         Retest on save
+   INSPECT
+     cargo expand                Show code after macros expand
 
    RELEASE
      cargo build --release       Optimized build
@@ -45,6 +52,14 @@
      cargo +beta build           Build on beta
      rustup show                 List what is installed
 
+ ──────────────────────────────────────────────────────────────
+   SHORTCUTS
+     c  cargo        cb  build     cr  run       ct  test
+     cn  nextest     cl  clippy    cf  fmt
+
+     ll  list files  lt  tree      z <dir>  jump to a folder
+     bat <file>  view with color   rg <text>  search code
+     Ctrl+R  search history        Ctrl+T  pick a file
  ──────────────────────────────────────────────────────────────
    Hit a compiler error? rustc --explain E0382 spells any code out.
  ──────────────────────────────────────────────────────────────
