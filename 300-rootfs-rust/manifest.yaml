@@ -132,7 +132,7 @@ playground:
         - name: laborant
           default: true
       drives:
-        - source: oci://ghcr.io/omkar-shelke25/rust-playground@sha256:REPLACE_WITH_DIGEST
+        - source: oci://ghcr.io/omkar-shelke25/rust-playground:sha-a3ed3b6
           mount: /
           size: 100GiB
       network:
