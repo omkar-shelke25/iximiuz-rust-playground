@@ -6,13 +6,13 @@ on:
     tags: ["v*.*.*"]
     paths:
       - "300-rootfs-rust/Dockerfile"
-      - ".github/workflows/docker-publish.yml"
+      # - ".github/workflows/docker-publish.yml"
       # - "300-rootfs-rust/welcome"
   pull_request:
     branches: [main]
     paths:
       - "300-rootfs-rust/Dockerfile"
-      - ".github/workflows/docker-publish.yml"
+      # - ".github/workflows/docker-publish.yml"
       # - "300-rootfs-rust/welcome"
   workflow_dispatch:
 
@@ -63,7 +63,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
           labels: |
             org.opencontainers.image.title=Rust playground rootfs
-            org.opencontainers.image.description=iximiuz Labs rootfs with Rust stable, beta and nightly, cargo-watch, rustfmt, clippy and the musl target
+            org.opencontainers.image.description=iximiuz Labs rootfs with Rust 1.98.1 stable, beta and nightly, the musl target, bacon, cargo-nextest, cargo-expand, cargo-audit, cargo-watch and a starship-based terminal
 
       - name: Log in to GHCR
         if: github.event_name != 'pull_request'
@@ -84,8 +84,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=rust-playground
+          cache-to: type=gha,mode=max,scope=rust-playground
 
       - name: Job summary
         if: github.event_name != 'pull_request'
