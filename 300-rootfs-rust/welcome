@@ -9,7 +9,7 @@
    A disposable Rust environment. Nothing is saved when it stops.
 
  ──────────────────────────────────────────────────────────────
-   Toolchains   stable 1.98.1 (default), beta, nightly
+   Toolchains   stable 1.99.0 (default), beta, nightly
    Targets      x86_64-unknown-linux-gnu, musl (static)
    Editor       IDE tab, rust-analyzer, clippy on save, lldb
    Shell        zsh, starship prompt, atuin history, tmux
