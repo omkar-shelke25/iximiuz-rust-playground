@@ -38,8 +38,16 @@ RUN rustup toolchain install beta --profile minimal -c rustfmt -c clippy \
 
 # Drop installer scratch space and make the tree writable here, so the final
 # image does not need a recursive chmod layer over ~1 GiB of files.
+# Identical files (libstd .so shipped by both the rustc and rust-std
+# components, shared licenses) are collapsed into hardlinks. COPY --from
+# keeps the links, so each file is stored once in the final image.
 RUN rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp" \
            "${CARGO_HOME}/registry" "${CARGO_HOME}/git" \
+    && find "${RUSTUP_HOME}" -type f -size +64k -exec sha256sum {} + \
+       | sort \
+       | while read -r sum path; do \
+           if [ "$sum" = "$prev" ]; then ln -f "$keep" "$path"; else prev=$sum; keep=$path; fi; \
+         done \
     && chmod -R a+w "${RUSTUP_HOME}" "${CARGO_HOME}"
 
 # =============================================================================
@@ -63,7 +71,9 @@ RUN curl -fsSL \
     | tar -xz -C /usr/local/cargo/bin cargo-binstall
 
 # Cargo workflow tools + Rust-written terminal tools, pinned.
-RUN cargo binstall -y --locked --disable-telemetry --root /opt/cargo-tools \
+# Source-build fallbacks are built stripped.
+RUN CARGO_PROFILE_RELEASE_STRIP=symbols \
+    cargo binstall -y --locked --disable-telemetry --root /opt/cargo-tools \
         cargo-watch@8.5.3 \
         bacon@3.25.0 \
         cargo-nextest@0.9.145 \
@@ -88,6 +98,11 @@ RUN mkdir -p /opt/fastfetch \
       "https://github.com/fastfetch-cli/fastfetch/releases/download/${FASTFETCH_VERSION}/fastfetch-linux-amd64.tar.gz" \
     | tar -xz -C /opt/fastfetch --strip-components=2
 
+# Strip symbol tables from every shipped binary. Release assets that are
+# already stripped are left unchanged.
+RUN find /opt/cargo-tools/bin /opt/fastfetch/bin -type f \
+      -exec strip --strip-unneeded {} + 2>/dev/null || true
+
 # =============================================================================
 # Stage 3: final rootfs
 # =============================================================================
@@ -105,6 +120,8 @@ ENV HOME=/root \
 # libssl-dev for the common -sys crates, musl-tools for the static target.
 # Plus zsh and its plugins. The base image already ships fzf (~/.fzf),
 # btop, jq and yq.
+# apt-get clean drops downloaded .deb files and the pkgcache/srcpkgcache
+# binaries, which rm on the lists alone leaves behind.
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
@@ -122,6 +139,7 @@ RUN apt-get update \
         zsh \
         zsh-autosuggestions \
         zsh-syntax-highlighting \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=toolchain /usr/local/rustup /usr/local/rustup
@@ -545,10 +563,14 @@ EOF
 USER $LAB_USER
 ENV HOME=/home/$LAB_USER
 
+# code-server keeps a copy of every downloaded .vsix in CachedExtensionVSIXs.
+# The installed extensions do not use it, so it is removed in the same layer.
 RUN code-server --install-extension rust-lang.rust-analyzer \
     && code-server --install-extension vadimcn.vscode-lldb \
     && code-server --install-extension tamasfe.even-better-toml \
-    && code-server --install-extension catppuccin.catppuccin-vsc
+    && code-server --install-extension catppuccin.catppuccin-vsc \
+    && rm -rf "$HOME/.local/share/code-server/CachedExtensionVSIXs" \
+              "$HOME/.local/share/code-server/logs"
 
 # code-server: zsh login terminal, Catppuccin Mocha theme, clippy on save,
 # inlay hints. The font list lets a locally installed Nerd Font draw icons
