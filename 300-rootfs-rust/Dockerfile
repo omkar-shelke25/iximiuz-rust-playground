@@ -9,7 +9,7 @@ ARG BASE=ghcr.io/iximiuz/labs/rootfs:ubuntu-docker
 # =============================================================================
 FROM ${BASE} AS toolchain
 
-ARG RUST_VERSION=1.98.1
+ARG RUST_VERSION=1.99.0
 
 USER root
 ENV HOME=/root \
