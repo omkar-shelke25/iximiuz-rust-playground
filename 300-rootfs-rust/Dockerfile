@@ -9,7 +9,7 @@ ARG BASE=ghcr.io/iximiuz/labs/rootfs:ubuntu-docker
 # =============================================================================
 FROM ${BASE} AS toolchain
 
-ARG RUST_VERSION=1.99.0
+ARG RUST_VERSION=1.99.1
 
 USER root
 ENV HOME=/root \
@@ -58,9 +58,9 @@ RUN rm -rf "${RUSTUP_HOME}/downloads" "${RUSTUP_HOME}/tmp" \
 # =============================================================================
 FROM toolchain AS tools
 
-ARG BINSTALL_VERSION=1.23.0
-ARG LAZYGIT_VERSION=0.65.1
-ARG FASTFETCH_VERSION=2.68.1
+ARG BINSTALL_VERSION=1.26.2
+ARG LAZYGIT_VERSION=0.66.3
+ARG FASTFETCH_VERSION=2.71.0
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential \
@@ -75,18 +75,18 @@ RUN curl -fsSL \
 RUN CARGO_PROFILE_RELEASE_STRIP=symbols \
     cargo binstall -y --locked --disable-telemetry --root /opt/cargo-tools \
         cargo-watch@8.5.3 \
-        bacon@3.25.0 \
-        cargo-nextest@0.9.145 \
-        cargo-expand@1.0.126 \
+        bacon@3.26.0 \
+        cargo-nextest@0.9.151 \
+        cargo-expand@1.0.127 \
         cargo-audit@0.22.2 \
-        starship@1.26.0 \
+        starship@1.27.0 \
         eza@0.23.5 \
         bat@0.26.1 \
-        fd-find@10.5.0 \
+        fd-find@10.5.2 \
         ripgrep@15.2.0 \
         zoxide@0.10.0 \
-        git-delta@0.19.2 \
-        atuin@18.22.0 \
+        git-delta@0.20.1 \
+        atuin@18.24.4 \
     && cp /usr/local/cargo/bin/cargo-binstall /opt/cargo-tools/bin/
 
 RUN curl -fsSL \
