@@ -7,13 +7,13 @@ cover: /content/files/playgrounds/rust-playground-303b96c8/__static__/rust.png?v
 categories:
   - programming
 markdown: |-
-  A disposable Rust development environment. Stable 1.98.1, beta, and nightly toolchains, rustfmt, clippy, rust-analyzer, codelldb, and the musl cross-compilation target are all pre-installed. Full IDE support via VS Code with a native debugger. Runs on 4 vCPU / 10 GiB RAM / 100 GiB disk.
+  A disposable Rust development environment. Stable 1.99.1, beta, and nightly toolchains, rustfmt, clippy, rust-analyzer, codelldb, and the musl cross-compilation target are all pre-installed. Full IDE support via VS Code with a native debugger. Runs on 4 vCPU / 10 GiB RAM / 100 GiB disk.
 
   Nothing is persisted once the playground stops.
 
   ## What's included
 
-  - `rustc` / `cargo` (stable 1.98.1 as default, beta, nightly)
+  - `rustc` / `cargo` (stable 1.99.1 as default, beta, nightly)
   - `rustfmt` code formatter and `clippy` linter (all three toolchains)
   - `rust-src` so rust-analyzer can resolve the standard library
   - `bacon`: background check, lint and test runner
