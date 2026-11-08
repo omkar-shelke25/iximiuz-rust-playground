@@ -1,6 +1,6 @@
 # 🦀 Rust Playground
 
-A disposable, ready-to-code Rust development environment powered by Cargo and Rust stable — no setup required.
+A disposable, ready-to-code Rust development environment with Rust 1.99.1 stable, beta and nightly — no setup required.
 
 ---
 
@@ -8,10 +8,12 @@ A disposable, ready-to-code Rust development environment powered by Cargo and Ru
 
 | Tool | Version |
 |---|---|
-| Rust | `stable` (via rustup) |
+| Rust | `1.99.1` stable, plus beta and nightly (via rustup) |
 | Cargo | included |
 | rustfmt | included |
 | Clippy | included |
+| bacon, cargo-nextest, cargo-expand, cargo-audit | included |
+| musl target | `x86_64-unknown-linux-musl` |
 | rust-analyzer | VS Code extension |
 
 ---
@@ -83,13 +85,13 @@ cargo clean        →  Remove build artifacts
 ## Docker Image
 
 ```
-ghcr.io/omkar-shelke25/rust-playground:0.0.17
+ghcr.io/omkar-shelke25/rust-playground:latest
 ```
 
 Build args:
 
 ```dockerfile
-ARG RUST_VERSION=stable
+ARG RUST_VERSION=1.99.1
 ARG LAB_USER=laborant
 ```
 
